@@ -12,10 +12,15 @@ let code_RESET = "\x1B[0m";;
 let map fn = List.map ~f:fn;;
 let foldl fn acc xs = List.fold ~init:acc ~f:fn xs;;
 
-let aliases = function
-    | "ls"::xs -> "ls --color=auto"::xs
-    | "exit"::xs -> exit 0
-    | xs -> xs
+let aliases_list = ref [
+    ("ls",["ls";"--color=auto"]);
+    ("ll",["ls";"-l"])
+];;
+
+let rec aliases cmd lst = match (cmd,lst) with
+    | ([], _) -> []
+    | (cm::args, [])-> cmd
+    | (cm::args, (x,y)::xs) -> if x=cm then y@args else aliases cmd xs
 ;;
 
 let de_empty lst = foldl (fun acc x -> if x="" then acc else x::acc) [] lst |> List.rev;;
@@ -23,18 +28,22 @@ let de_empty lst = foldl (fun acc x -> if x="" then acc else x::acc) [] lst |> L
 let tokenize s = String.split_on_chars ~on:[' ';'\t';'\n';'\r'] s |> de_empty;;
 
 let execute = function
-    | "cd"::d::[] -> Sys.chdir d
-    | xs ->
-        let cmd = foldl (fun acc x -> acc^" "^x) "" xs in
-        printf "%s\n" cmd;
-        Sys.command cmd |> ignore
+    | [] -> printf ""
+    | "exit"::_ -> exit 0
+    | "cd"::d::_ -> Sys.chdir d
+    | "cd"::[] -> Sys.chdir (match Sys.getenv "HOME" with Some x -> x | None -> "/")
+    | (x::xs) as command ->
+        let pid = Unix.fork_exec ~prog:x ~args:command ~use_path:true () in
+        Unix.waitpid pid |> ignore
 ;;
 
 let rec shell_loop () =
-    printf "%s%s%s-$ %s" code_BLU (Sys.getcwd ()) code_RED code_RESET;
+    printf "%s[%s%s@" code_CYN code_RESET (Unix.getlogin ());
+    printf "%s%s%s]-" code_RED (Unix.gethostname ()) code_CYN;
+    printf "[%s%s%s%s]╼$ %s" code_RESET code_BLU (Sys.getcwd ()) code_CYN code_RESET;
     let s = read_line () in
     let tokens = tokenize s in
-    let cmdlst = aliases tokens in
+    let cmdlst = aliases tokens !aliases_list in
     execute cmdlst;
     shell_loop ();
 ;;
