@@ -14,9 +14,18 @@ let code_RESET = "\x1B[0m";;
 let map fn = List.map ~f:fn;;
 let foldl fn acc xs = List.fold ~init:acc ~f:fn xs;;
 
+(* A couple of global variables *)
 let history = ref ["history";"ls"];;
 
-let show lst =
+let aliases_list = ref [
+    ("ls",["ls";"--color=auto"]);
+    ("la",["ls";"-a"])
+];;
+
+(* Show history with numbers
+ * might be more efficient 
+ * to use a for loop *)
+let show_hist lst =
     let rec aux count = function
         | [] -> ()
         | x::xs -> printf "%d %s\n" count x; aux (count + 1) xs
@@ -24,11 +33,6 @@ let show lst =
 ;;
 
 (* List of aliases *)
-let aliases_list = ref [
-    ("ls",["ls";"--color=auto"]);
-    ("la",["ls";"-a"])
-];;
-
 (* Takes a command and a list of aliases
  * Switching command for any aliases *)
 let rec aliases cmd lst = match (cmd,lst) with
@@ -44,12 +48,13 @@ let tokenize s = String.split_on_chars ~on:[' ';'\t';'\n';'\r'] s |> de_empty;;
 
 
 let parse_alias lst =
-    let str = String.concat ~sep:" " lst in
+    let str = String.strip (String.concat ~sep:" " lst) in
     let stripped = String.strip ~drop:(fun c -> c = '"') str in
     String.split ~on:' ' stripped
 ;;
 
-(* aliases_list := ("lx",["ls";"-l"])::!aliases_list; *)
+(* alias command
+ * Adds an alias to the alias_list (if valid) *)
 let alias = function
     | [] -> printf ""
     | "alias"::[] -> printf "Invalid alias\n"
@@ -69,10 +74,12 @@ let alias = function
 (* Executes a command, using build in functions for cd and exit *)
 let execute = function
     | [] -> printf ""
-    | "history"::[] -> show !history
+    | "history"::[] -> show_hist !history
     | ("alias"::_) as cmd -> alias cmd
     | "exit"::_ -> exit 0
-    | "cd"::d::_ -> Sys.chdir d
+    | "cd"::d::_ -> 
+            (try Sys.chdir d with
+            | Sys_error e -> printf "cd: %s\n" e)
     | "cd"::[] -> Sys.chdir (match Sys.getenv "HOME" with Some x -> x | None -> "/")
     | (x::xs) as command ->
         let pid = Unix.fork_exec ~prog:x ~args:command ~use_path:true () in
