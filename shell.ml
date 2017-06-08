@@ -15,7 +15,7 @@ let map fn = List.map ~f:fn;;
 let foldl fn acc xs = List.fold ~init:acc ~f:fn xs;;
 
 (* A couple of global variables *)
-let history = ref ["history";"ls"];;
+let history = ref [];;
 
 let aliases_list = ref [
     ("ls",["ls";"--color=auto"]);
@@ -45,7 +45,6 @@ let rec aliases cmd lst = match (cmd,lst) with
 let de_empty lst = foldl (fun acc x -> if x="" then acc else x::acc) [] lst |> List.rev;;
 
 let tokenize s = String.split_on_chars ~on:[' ';'\t';'\n';'\r'] s |> de_empty;;
-
 
 let parse_alias lst =
     let str = String.strip (String.concat ~sep:" " lst) in
@@ -82,8 +81,11 @@ let execute = function
             | Sys_error e -> printf "cd: %s\n" e)
     | "cd"::[] -> Sys.chdir (match Sys.getenv "HOME" with Some x -> x | None -> "/")
     | (x::xs) as command ->
-        let pid = Unix.fork_exec ~prog:x ~args:command ~use_path:true () in
-        Unix.waitpid pid |> ignore
+        try 
+            let pid = Unix.fork_exec ~prog:x ~args:command ~use_path:true () in
+            Unix.waitpid pid |> ignore
+        with
+        | Unix.Unix_error (uerr, ucommand, dir) -> printf("There was an error: The command you just entered is likely not found\n"); exit 2;
 ;;
 
 let getCommand () = 
@@ -105,6 +107,10 @@ let rec shell_loop () =
     let cmdlst = aliases tokens !aliases_list in
     history := s::!history;
     execute cmdlst;
+    (*
+    (try execute cmdlst () with
+    | Unix.Unix_error (uerr, ucommand, dir) -> printf("There was an error\n");)
+    *)
     shell_loop ();
 ;;
 
