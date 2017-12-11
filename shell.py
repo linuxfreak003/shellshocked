@@ -11,6 +11,7 @@ KWHT = "\x1B[37m"
 
 
 history = []
+aliases = {}
 
 def execute(args):
     if args[0] == "exit":
@@ -25,6 +26,11 @@ def execute(args):
         for i in range(len(history)):
             print(i,history[i])
         return 1
+    n = os.fork()
+    if n == 0:
+        os.execvp(args[0], args)
+        exit(0)
+    os.wait()
 
 
 def shell_loop():

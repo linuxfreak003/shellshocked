@@ -9,6 +9,9 @@ run: $(TARGET)
 $(TARGET): shell.ml
 	ocamlfind ocamlopt -linkpkg -thread -package core shell.ml -o jsh
 
+xsh: shell.cpp
+	g++ -o xsh shell.cpp
+
 jshc: shell.c
 	gcc -o jshc shell.c
 
@@ -31,5 +34,5 @@ Description: ShellShocked\n\
 
 clean:
 	rm -rf *.cmi *.cmo *.cmx *.o
-	rm $(TARGET)
-	rm -rf jshc
+	rm -f $(TARGET)
+	rm -rf jshc xsh
