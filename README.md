@@ -16,3 +16,6 @@ To run in OCaml
 
 To run in Python
 * `python3 shell.py` - you must have python3 installed
+
+To run in GO
+* `go run shell.go`
