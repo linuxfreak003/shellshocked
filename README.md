@@ -1,14 +1,18 @@
 # shellshocked
-Different shells, so far C and OCaml
+Different shells, so far C, OCaml and Python
 
 The C code is mostly copied over from Stephen Brennan's blog [here.](https://brennan.io/2015/01/16/write-a-shell-in-c/)
 
-I started the C code to learn more about creating a shell. The OCaml code was to get a little bit of experience and become more familiar with OCaml.
+I started the C code to learn more about creating a shell.
+The OCaml code was to get a little bit of experience and become more familiar with OCaml. The python code is just to add another language.
 
-I may add some Python code someday if I get bored and feel like doing something.
+I will likely add Go next.
 
-To run use makefile.
-* `make jsh` or simply `make` to create the native binary from OCaml.
+To run in C
 * `make jshc` to compile the C code into a binary.
-* `make clean` will remove auxilary files.
-* `make deepclean` will remove binaries as well.
+
+To run in OCaml
+* `make jsh` or simply `make` to create the native binary from OCaml.
+
+To run in Python
+* `python3 shell.py` - you must have python3 installed
