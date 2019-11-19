@@ -38,7 +38,7 @@ char * jsh_read_line() {
 int jsh_launch(char **args) {
 	pid_t pid, wpid;
 	int status;
-	
+
 	pid = fork();
 
 	if (pid == 0) {
@@ -178,12 +178,13 @@ void jsh_loop(void) {
 
 int main(int argc, char **argv) {
 	// Load any config files (if you're into that)
-
+  printf("Starting shell.\n");
 
 	// Run Command Loop
 	jsh_loop();
 
 	// Cleanup
+  printf("Exiting shell.\n");
 
 	return EXIT_SUCCESS;
 }

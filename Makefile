@@ -1,19 +1,22 @@
 VERSION := 1.1
 TARGET := jsh
 
-all: $(TARGET)
+all: ocaml
 
-run: $(TARGET)
+run: ocaml
 	./$(TARGET)
 
-$(TARGET): shell.ml
-	ocamlfind ocamlopt -linkpkg -thread -package core shell.ml -o jsh
+ocaml: shell.ml
+	ocamlfind ocamlopt -linkpkg -thread -package core shell.ml -o $(TARGET)
 
-xsh: shell.cpp
-	g++ -o xsh shell.cpp
+# cpp: shell.cpp
+# 	g++ -o shell shell.cpp
 
-jshc: shell.c
-	gcc -o jshc shell.c
+c: shell.c
+	gcc -o $(TARGET) shell.c
+
+go: shell.go
+	go build -o $(TARGET) shell.go
 
 deb: $(TARGET)
 	mkdir -p $(TARGET)_$(VERSION)/usr/local/bin
@@ -33,6 +36,5 @@ Description: ShellShocked\n\
 	rm -rf $(TARGET)_$(VERSION)
 
 clean:
-	rm -rf *.cmi *.cmo *.cmx *.o
-	rm -f $(TARGET)
-	rm -rf jshc xsh
+	@rm -rf *.cmi *.cmo *.cmx *.o
+	@rm -f $(TARGET)
