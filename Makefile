@@ -3,6 +3,8 @@ TARGET := jsh
 
 all: ocaml
 
+$(TARGET): ocaml
+
 run: ocaml
 	./$(TARGET)
 
@@ -38,3 +40,4 @@ Description: ShellShocked\n\
 clean:
 	@rm -rf *.cmi *.cmo *.cmx *.o
 	@rm -f $(TARGET)
+	@rm -rf $(TARGET)_$(VERSION)
