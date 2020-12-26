@@ -5,7 +5,7 @@ all: ocaml
 
 $(TARGET): ocaml
 
-run: ocaml
+run: c
 	./$(TARGET)
 
 ocaml: shell.ml
