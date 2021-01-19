@@ -15,10 +15,18 @@ Default `make` will compile the OCaml version
 
 `make run` will compile and run the OCaml version
 
-To compile in different language:
+Note: This likely will not work with the newest version of OCaml, unfortunately, I forgot
+what version of OCaml I was using when I wrote it, and the code has changed, so... Good luck.
+
+To compile in different languages:
 * OCaml: `make` or `make ocaml`
 * C: `make c`
+    - Requires `gcc`
 * Go: `make go`
+    - Requires `go`
+    - `go get github.com/gookit/color`
+* Rust: `make rust`
+    - Requires `rustc`
 
 They will all output a `jsh` binary that can be run
 

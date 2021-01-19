@@ -20,6 +20,9 @@ c: shell.c
 go: shell.go
 	go build -o $(TARGET) shell.go
 
+rust: shell.rs
+	rustc -o $(TARGET) shell.rs
+
 deb: $(TARGET)
 	mkdir -p $(TARGET)_$(VERSION)/usr/local/bin
 	cp $(TARGET) $(TARGET)_$(VERSION)/usr/local/bin/.
