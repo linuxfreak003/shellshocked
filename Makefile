@@ -1,11 +1,11 @@
 VERSION := 1.1
 TARGET := jsh
 
-all: ocaml
+all: go
 
-$(TARGET): ocaml
+$(TARGET): go
 
-run: c
+run: go
 	./$(TARGET)
 
 ocaml: shell.ml
@@ -33,7 +33,7 @@ Section: base\n\
 Priority: optional\n\
 Architecture: amd64\n\
 Depends:\n\
-Maintainer: Jared Chapman <jaredpchapman@gmail.com>\n\
+Maintainer: Linuxfreak003 <linuxfreak003@gmail.com>\n\
 Description: ShellShocked\n\
  A simple shell written in\n\
  Objective-Caml" > $(TARGET)_$(VERSION)/DEBIAN/control;\

@@ -12,7 +12,6 @@ import (
 )
 
 var aliases = map[string][]string{
-	"ls": {"ls", "--color=auto"},
 	"ll": {"ls", "-la"},
 }
 
@@ -28,7 +27,7 @@ func JshLaunch(args []string) int {
 			args = append(a, args[1:]...)
 		}
 	}
-	fmt.Printf("Starting command:\n%v", args)
+	fmt.Printf("Starting command:\n%v\n", args)
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
